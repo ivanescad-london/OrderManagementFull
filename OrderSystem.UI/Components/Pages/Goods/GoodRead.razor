@@ -1,0 +1,45 @@
+﻿@* Components/Pages/Goods/GoodRead.razor *@
+@page "/goods/read/{id:int}"
+@rendermode InteractiveServer
+@inject GoodService GoodService
+@inject NavigationManager Nav
+
+<h2>Good Details</h2>
+
+@if (good == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table>
+        <tbody>
+            <tr>
+                <td style="border: 1px solid black; padding: 8px;"><label>Id</label></td>
+                <td style="border: 1px solid black; padding: 8px;">@good.Id</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid black; padding: 8px;"><label>Name</label></td>
+                <td style="border: 1px solid black; padding: 8px;">@good.Name</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid black; padding: 8px;"><label>Price</label></td>
+                <td style="border: 1px solid black; padding: 8px;">@good.Price.ToString("C")</td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+
+    <button @onclick='() => Nav.NavigateTo($"/goods/update/{good.Id}")'>Update</button>
+    <button @onclick='() => Nav.NavigateTo($"/goods/delete/{good.Id}")'>Delete</button>
+    <button @onclick='() => Nav.NavigateTo("/goods")'>Back to List</button>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Good? good;
+
+    protected override async Task OnInitializedAsync() =>
+        good = await GoodService.GetByIdAsync(Id);
+}

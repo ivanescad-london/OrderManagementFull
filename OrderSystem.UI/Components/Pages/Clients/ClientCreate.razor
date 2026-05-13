@@ -1,0 +1,39 @@
+﻿@* Components/Pages/Clients/ClientCreate.razor *@
+@page "/clients/create"
+@rendermode InteractiveServer
+@inject ClientService ClientService
+@inject NavigationManager Nav
+
+<h2>Add Client</h2>
+
+<div>
+    <label>Name</label>
+    <input @bind="client.Name" />
+</div>
+
+<button @onclick="Submit">Save</button>
+<button @onclick='() => Nav.NavigateTo("/clients")'>Cancel</button>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color:red;">@errorMessage</p>
+}
+
+
+@code {
+    private Client client = new();
+    private string? errorMessage;
+
+
+    private async Task Submit()
+    {
+        if (string.IsNullOrWhiteSpace(client.Name))
+        {
+            errorMessage = "Name is required.";
+            return;
+        }
+
+        await ClientService.CreateAsync(client);
+        Nav.NavigateTo("/clients");
+    }
+}

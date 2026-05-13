@@ -1,0 +1,56 @@
+﻿@* Components/Pages/Goods/GoodUpdate.razor *@
+@page "/goods/update/{id:int}"
+@rendermode InteractiveServer
+@inject GoodService GoodService
+@inject NavigationManager Nav
+
+
+<h2>Update Good</h2>
+
+
+@if (good == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div>
+        <label>Name</label>
+        <input @bind="good.Name" />
+    </div>
+    <div>
+        <label>Price</label>
+        <input type="number" @bind="good.Price" />
+    </div>
+
+    <button @onclick="Submit">Save</button>
+    <button @onclick='() => Nav.NavigateTo("/goods")'>Cancel</button>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p style="color:red;">@errorMessage</p>
+    }
+}
+
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Good? good;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync() =>
+        good = await GoodService.GetByIdAsync(Id);
+
+    private async Task Submit()
+    {
+        if (string.IsNullOrWhiteSpace(good!.Name))
+        {
+            errorMessage = "Name is required.";
+            return;
+        }
+
+        await GoodService.UpdateAsync(good.Id, good);
+        Nav.NavigateTo("/goods");
+    }
+}

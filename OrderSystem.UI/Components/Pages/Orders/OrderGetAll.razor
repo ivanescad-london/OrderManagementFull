@@ -1,0 +1,59 @@
+﻿@* Components/Pages/Orders/OrderGetAll.razor *@
+@page "/orders"
+@rendermode InteractiveServer
+@inject OrderReadDtoService OrderService
+@inject NavigationManager Nav
+
+<h2>Orders</h2>
+<button @onclick='() => Nav.NavigateTo("/orders/create")'>+ Add New</button>
+
+@if (items == null)
+{
+    <p>Loading...</p>
+}
+else if (!items.Any())
+{
+    <p>No orders found.</p>
+}
+else
+{
+    <p/>
+    <table>
+        <thead>
+            <tr>
+                <th style="border: 1px solid black; padding: 2px;">Id</th>
+                <th style="border: 1px solid black; padding: 2px;">Client</th>
+                <th style="border: 1px solid black; padding: 2px;">Supplier</th>
+                <th style="border: 1px solid black; padding: 2px;">Good</th>
+                <th style="border: 1px solid black; padding: 2px;">Quantity</th>
+                <th style="border: 1px solid black; padding: 2px;">Date/Time</th>
+                <th style="border: 1px solid black; padding: 2px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in items)
+            {
+                <tr>
+                    <td style="border: 1px solid black; padding: 2px;">@item.Id</td>
+                    <td style="border: 1px solid black; padding: 2px;">@item.Client</td>
+                    <td style="border: 1px solid black; padding: 2px;">@item.Supplier</td>
+                    <td style="border: 1px solid black; padding: 2px;">@item.Goods</td>
+                    <td style="border: 1px solid black; padding: 2px;">@item.Quantity.ToString()</td>
+                    <td style="border: 1px solid black; padding: 2px;">@item.OrderDate.ToString()</td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <button @onclick='() => Nav.NavigateTo($"/orders/read/{item.Id}")'>View</button>
+                        <button @onclick='() => Nav.NavigateTo($"/orders/update/{item.Id}")'>Update</button>
+                        <button @onclick='() => Nav.NavigateTo($"/orders/delete/{item.Id}")'>Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<OrderReadDto>? items;
+
+    protected override async Task OnInitializedAsync() =>
+        items = await OrderService.GetAllAsync();
+}

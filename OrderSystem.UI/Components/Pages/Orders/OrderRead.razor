@@ -1,0 +1,57 @@
+﻿@* Components/Pages/Orders/OrderRead.razor *@
+@page "/orders/read/{id:int}"
+@rendermode InteractiveServer
+@inject OrderReadDtoService OrderService
+@inject NavigationManager Nav
+
+<h2>Order Details</h2>
+
+@if (order == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table>
+        <tbody>
+            <tr>
+                <td style="border: 1px solid black; padding: 8px;"><label>Id</label></td>
+                <td style="border: 1px solid black; padding: 8px;">@order.Id</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid black; padding: 8px;"><label>Client</label></td>
+                <td style="border: 1px solid black; padding: 8px;">@order.Client</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid black; padding: 8px;"><label>Supplier</label></td>
+                <td style="border: 1px solid black; padding: 8px;">@order.Supplier</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid black; padding: 8px;"><label>Good</label></td>
+                <td style="border: 1px solid black; padding: 8px;">@order.Goods</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid black; padding: 8px;"><label>Quantity</label></td>
+                <td style="border: 1px solid black; padding: 8px;">@order.Quantity.ToString()</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid black; padding: 8px;"><label>OrderDate</label></td>
+                <td style="border: 1px solid black; padding: 8px;">@order.OrderDate.ToString()</td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+
+    <button @onclick='() => Nav.NavigateTo($"/orders/update/{order.Id}")'>Update</button>
+    <button @onclick='() => Nav.NavigateTo($"/orders/delete/{order.Id}")'>Delete</button>
+    <button @onclick='() => Nav.NavigateTo("/orders")'>Back to List</button>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private OrderReadDto? order;
+
+    protected override async Task OnInitializedAsync() =>
+        order = await OrderService.GetByIdAsync(Id);
+}

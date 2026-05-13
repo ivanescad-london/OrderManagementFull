@@ -1,0 +1,53 @@
+﻿@* Components/Pages/Suppliers/SupplierUpdate.razor *@
+@page "/suppliers/update/{id:int}"
+@rendermode InteractiveServer
+@inject SupplierService SupplierService
+@inject NavigationManager Nav
+
+<h2>Update Supplier</h2>
+
+@if (supplier == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div>
+        <label>Name</label>
+        <input @bind="supplier.Name" />
+    </div>
+
+    <button @onclick="Submit">Save</button>
+    <button @onclick='() => Nav.NavigateTo("/suppliers")'>Cancel</button>
+
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p style="color:red;">@errorMessage</p>
+    }
+}
+
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Supplier? supplier;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync() =>
+        supplier = await SupplierService.GetByIdAsync(Id);
+
+    private async Task Submit()
+    {
+        if (string.IsNullOrWhiteSpace(supplier!.Name))
+        {
+            errorMessage = "Name is required.";
+            return;
+        }
+
+
+        await SupplierService.UpdateAsync(supplier.Id, supplier);
+        Nav.NavigateTo("/suppliers");
+    }
+}
+

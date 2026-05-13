@@ -1,0 +1,42 @@
+﻿@* Components/Pages/Goods/GoodCreate.razor *@
+@page "/goods/create"
+@rendermode InteractiveServer
+@inject GoodService GoodService
+@inject NavigationManager Nav
+
+<h2>Add Good</h2>
+
+<div>
+    <label>Name</label>
+    <input @bind="good.Name" />
+</div>
+<div>
+    <label>Price</label>
+    <input type="number" @bind="good.Price" />
+</div>
+
+<button @onclick="Submit">Save</button>
+<button @onclick='() => Nav.NavigateTo("/goods")'>Cancel</button>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color:red;">@errorMessage</p>
+}
+
+@code {
+    private Good good = new();
+    private string? errorMessage;
+
+
+    private async Task Submit()
+    {
+        if (string.IsNullOrWhiteSpace(good.Name))
+        {
+            errorMessage = "Name is required.";
+            return;
+        }
+
+        await GoodService.CreateAsync(good);
+        Nav.NavigateTo("/goods");
+    }
+}

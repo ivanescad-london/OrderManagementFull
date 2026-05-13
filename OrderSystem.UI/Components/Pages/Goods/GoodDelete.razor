@@ -1,0 +1,53 @@
+﻿@* Components/Pages/Goods/GoodDelete.razor *@
+@page "/goods/delete/{id:int}"
+@rendermode InteractiveServer
+@inject GoodService GoodService
+@inject NavigationManager Nav
+
+<h2>Delete Good</h2>
+
+@if (good == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <p>Are you sure you want to delete <strong>@good.Name</strong>?</p>
+
+    <div>
+        <label>Id</label>
+        <p>@good.Id</p>
+    </div>
+    <div>
+        <label>Name</label>
+        <p>@good.Name</p>
+    </div>
+    <div>
+        <label>Price</label>
+        <p>@good.Price.ToString("C")</p>
+    </div>
+
+    <button @onclick="ConfirmDelete">Yes, Delete</button>
+    <button @onclick='() => Nav.NavigateTo("/goods")'>Cancel</button>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p style="color:red;">@errorMessage</p>
+    }
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Good? good;
+    private string? errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync() =>
+        good = await GoodService.GetByIdAsync(Id);
+
+    private async Task ConfirmDelete()
+    {
+        await GoodService.DeleteAsync(Id);
+        Nav.NavigateTo("/goods");
+    }
+}

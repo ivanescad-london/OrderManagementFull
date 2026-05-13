@@ -1,0 +1,60 @@
+﻿@* Components/Pages/Orders/OrderCreate.razor *@
+@page "/orders/create"
+@rendermode InteractiveServer
+@inject OrderCreateDtoService OrderService
+@inject NavigationManager Nav
+
+<h2>Add Order</h2>
+
+<div>
+    <label>ClientId</label>
+    <input type="number" @bind="order.ClientId" />
+</div>
+<div>
+    <label>SupplierId</label>
+    <input type="number" @bind="order.SupplierId" />
+</div>
+<div>
+    <label>GoodId</label>
+    <input type="number" @bind="order.GoodsId" />
+</div>
+<div>
+    <label>Quantity</label>
+    <input type="number" @bind="order.Quantity" />
+</div>
+
+<button @onclick="Submit">Save</button>
+<button @onclick='() => Nav.NavigateTo("/orders")'>Cancel</button>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color:red;">@errorMessage</p>
+}
+
+@code {
+    private OrderCreateDto order = new();
+    private string? errorMessage;
+
+    private async Task Submit()
+    {
+        if (order.ClientId <= 0)
+        {
+            errorMessage = "ClientId is required.";
+            return;
+        }
+        if (order.SupplierId <= 0)
+        {
+            errorMessage = "SupplierId is required.";
+            return;
+        }
+        if (order.GoodsId <= 0)
+        {
+            errorMessage = "GoodId is required.";
+            return;
+        }
+
+        order.OrderDate = DateTime.Now;
+        await OrderService.CreateAsync(order);
+        Nav.NavigateTo("/orders");
+    }
+}

@@ -1,0 +1,39 @@
+﻿@* Components/Pages/Suppliers/SupplierCreate.razor *@
+@page "/suppliers/create"
+@rendermode InteractiveServer
+@inject SupplierService SupplierService
+@inject NavigationManager Nav
+
+<h2>Add Supplier</h2>
+
+<div>
+    <label>Name</label>
+    <input @bind="supplier.Name" />
+</div>
+
+<button @onclick="Submit">Save</button>
+<button @onclick='() => Nav.NavigateTo("/suppliers")'>Cancel</button>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color:red;">@errorMessage</p>
+}
+
+
+@code {
+    private Supplier supplier = new();
+    private string? errorMessage;
+
+
+    private async Task Submit()
+    {
+        if (string.IsNullOrWhiteSpace(supplier.Name))
+        {
+            errorMessage = "Name is required.";
+            return;
+        }
+
+        await SupplierService.CreateAsync(supplier);
+        Nav.NavigateTo("/suppliers");
+    }
+}

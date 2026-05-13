@@ -1,0 +1,51 @@
+﻿@* Components/Pages/Suppliers/SupplierGetAll.razor *@
+@page "/suppliers"
+@rendermode InteractiveServer
+@inject SupplierService SupplierService
+@inject NavigationManager Nav
+
+<h2>Suppliers</h2>
+<button @onclick='() => Nav.NavigateTo("/Suppliers/create")'>+ Add New</button>
+
+@if (items == null)
+{
+    <p>Loading...</p>
+}
+else if (!items.Any())
+{
+    <p>No suppliers found.</p>
+}
+else
+{
+    <p/>
+    <table>
+        <thead>
+            <tr>
+                <th style="border: 1px solid black; padding: 2px;">Id</th>
+                <th style="border: 1px solid black; padding: 2px;">Name</th>
+                <th style="border: 1px solid black; padding: 2px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in items)
+            {
+                <tr>
+                    <td style="border: 1px solid black; padding: 2px;">@item.Id</td>
+                    <td style="border: 1px solid black; padding: 2px;">@item.Name</td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <button @onclick='() => Nav.NavigateTo($"/suppliers/read/{item.Id}")'>View</button>
+                        <button @onclick='() => Nav.NavigateTo($"/suppliers/update/{item.Id}")'>Update</button>
+                        <button @onclick='() => Nav.NavigateTo($"/suppliers/delete/{item.Id}")'>Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Supplier>? items;
+
+    protected override async Task OnInitializedAsync() =>
+        items = await SupplierService.GetAllAsync();
+}

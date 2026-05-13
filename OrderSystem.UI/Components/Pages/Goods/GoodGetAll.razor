@@ -1,0 +1,53 @@
+﻿@* Components/Pages/Goods/GoodGetAll.razor *@
+@page "/goods"
+@rendermode InteractiveServer
+@inject GoodService GoodService
+@inject NavigationManager Nav
+
+<h2>Goods</h2>
+<button @onclick='() => Nav.NavigateTo("/goods/create")'>+ Add New</button>
+
+@if (items == null)
+{
+    <p>Loading...</p>
+}
+else if (!items.Any())
+{
+    <p>No goods found.</p>
+}
+else
+{
+    <p/>
+    <table>
+        <thead>
+            <tr>
+                <th style="border: 1px solid black; padding: 2px;">Id</th>
+                <th style="border: 1px solid black; padding: 2px;">Name</th>
+                <th style="border: 1px solid black; padding: 2px;">Price</th>
+                <th style="border: 1px solid black; padding: 2px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in items)
+            {
+                <tr>
+                    <td style="border: 1px solid black; padding: 2px;">@item.Id</td>
+                    <td style="border: 1px solid black; padding: 2px;">@item.Name</td>
+                    <td style="border: 1px solid black; padding: 2px;">@item.Price.ToString("C")</td>
+                    <td style="border: 1px solid black; padding: 2px;">
+                        <button @onclick='() => Nav.NavigateTo($"/goods/read/{item.Id}")'>View</button>
+                        <button @onclick='() => Nav.NavigateTo($"/goods/update/{item.Id}")'>Update</button>
+                        <button @onclick='() => Nav.NavigateTo($"/goods/delete/{item.Id}")'>Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Good>? items;
+
+    protected override async Task OnInitializedAsync() =>
+        items = await GoodService.GetAllAsync();
+}

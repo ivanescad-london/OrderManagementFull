@@ -1,0 +1,49 @@
+﻿@* Components/Pages/Clients/ClientDelete.razor *@
+@page "/clients/delete/{id:int}"
+@rendermode InteractiveServer
+@inject ClientService ClientService
+@inject NavigationManager Nav
+
+<h2>Delete Client</h2>
+
+@if (client == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <p>Are you sure you want to delete <strong>@client.Name</strong>?</p>
+
+    <div>
+        <label>Id</label>
+        <p>@client.Id</p>
+    </div>
+    <div>
+        <label>Name</label>
+        <p>@client.Name</p>
+    </div>
+
+    <button @onclick="ConfirmDelete">Yes, Delete</button>
+    <button @onclick='() => Nav.NavigateTo("/clients")'>Cancel</button>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p style="color:red;">@errorMessage</p>
+    }
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Client? client;
+    private string? errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync() =>
+        client = await ClientService.GetByIdAsync(Id);
+
+    private async Task ConfirmDelete()
+    {
+        await ClientService.DeleteAsync(Id);
+        Nav.NavigateTo("/clients");
+    }
+}

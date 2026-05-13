@@ -1,0 +1,55 @@
+﻿@* Components/Pages/Clients/ClientUpdate.razor *@
+@page "/clients/update/{id:int}"
+@rendermode InteractiveServer
+@inject ClientService ClientService
+@inject NavigationManager Nav
+
+
+<h2>Update Client</h2>
+
+
+@if (client == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div>
+        <label>Name</label>
+        <input @bind="client.Name" />
+    </div>
+
+    <button @onclick="Submit">Save</button>
+    <button @onclick='() => Nav.NavigateTo("/clients")'>Cancel</button>
+
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p style="color:red;">@errorMessage</p>
+    }
+}
+
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Client? client;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync() =>
+        client = await ClientService.GetByIdAsync(Id);
+
+    private async Task Submit()
+    {
+        if (string.IsNullOrWhiteSpace(client!.Name))
+        {
+            errorMessage = "Name is required.";
+            return;
+        }
+
+
+        await ClientService.UpdateAsync(client.Id, client);
+        Nav.NavigateTo("/clients");
+    }
+}
+

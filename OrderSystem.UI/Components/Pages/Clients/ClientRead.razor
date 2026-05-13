@@ -1,0 +1,41 @@
+﻿@* Components/Pages/Clients/ClientRead.razor *@
+@page "/clients/read/{id:int}"
+@rendermode InteractiveServer
+@inject ClientService ClientService
+@inject NavigationManager Nav
+
+<h2>Client Details</h2>
+
+@if (client == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table>
+        <tbody>
+            <tr>
+                <td style="border: 1px solid black; padding: 8px;"><label>Id</label></td>
+                <td style="border: 1px solid black; padding: 8px;">@client.Id</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid black; padding: 8px;"><label>Name</label></td>
+                <td style="border: 1px solid black; padding: 8px;">@client.Name</td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+
+    <button @onclick='() => Nav.NavigateTo($"/clients/update/{client.Id}")'>Update</button>
+    <button @onclick='() => Nav.NavigateTo($"/clients/delete/{client.Id}")'>Delete</button>
+    <button @onclick='() => Nav.NavigateTo("/clients")'>Back to List</button>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Client? client;
+
+    protected override async Task OnInitializedAsync() =>
+        client = await ClientService.GetByIdAsync(Id);
+}

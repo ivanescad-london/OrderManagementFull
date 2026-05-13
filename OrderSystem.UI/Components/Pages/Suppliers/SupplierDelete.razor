@@ -1,0 +1,49 @@
+﻿@* Components/Pages/Suppliers/SupplierDelete.razor *@
+@page "/suppliers/delete/{id:int}"
+@rendermode InteractiveServer
+@inject SupplierService SupplierService
+@inject NavigationManager Nav
+
+<h2>Delete Supplier</h2>
+
+@if (supplier == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <p>Are you sure you want to delete <strong>@supplier.Name</strong>?</p>
+
+    <div>
+        <label>Id</label>
+        <p>@supplier.Id</p>
+    </div>
+    <div>
+        <label>Name</label>
+        <p>@supplier.Name</p>
+    </div>
+
+    <button @onclick="ConfirmDelete">Yes, Delete</button>
+    <button @onclick='() => Nav.NavigateTo("/suppliers")'>Cancel</button>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p style="color:red;">@errorMessage</p>
+    }
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Supplier? supplier;
+    private string? errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync() =>
+        supplier = await SupplierService.GetByIdAsync(Id);
+
+    private async Task ConfirmDelete()
+    {
+        await SupplierService.DeleteAsync(Id);
+        Nav.NavigateTo("/suppliers");
+    }
+}

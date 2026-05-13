@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/OrderSystem/.vs/OrderSystem
+/OrderSystem/bin/Debug/net9.0
+/.vs
+/OrderSystem/obj
+/OrderSystem.UI/bin/Debug/net9.0
+/OrderSystem.UI/obj

@@ -1,0 +1,61 @@
+﻿@* Components/Pages/Orders/OrderDelete.razor *@
+@page "/orders/delete/{id:int}"
+@rendermode InteractiveServer
+@inject OrderReadDtoService OrderService
+@inject NavigationManager Nav
+
+<h2>Delete Order</h2>
+
+@if (order == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <p>Are you sure you want to delete <strong>@order.Id</strong>?</p>
+
+    <div>
+        <label>Id</label>
+        <p>@order.Id</p>
+    </div>
+    <div>
+        <label>Client</label>
+        <p>@order.Client</p>
+    </div>
+    <div>
+        <label>Supplier</label>
+        <p>@order.Supplier</p>
+    </div>
+    <div>
+        <label>Good</label>
+        <p>@order.Goods</p>
+    </div>
+    <div>
+        <label>Quantity</label>
+        <p>@order.Quantity.ToString()</p>
+    </div>
+
+    <button @onclick="ConfirmDelete">Yes, Delete</button>
+    <button @onclick='() => Nav.NavigateTo("/orders")'>Cancel</button>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p style="color:red;">@errorMessage</p>
+    }
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private OrderReadDto? order;
+    private string? errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync() =>
+        order = await OrderService.GetByIdAsync(Id);
+
+    private async Task ConfirmDelete()
+    {
+        await OrderService.DeleteAsync(Id);
+        Nav.NavigateTo("/orders");
+    }
+}
