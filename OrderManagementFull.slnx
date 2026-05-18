@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose.yml" />
+  </Folder>
   <Project Path="OrderSystem.UI/OrderSystem.UI.csproj" Id="6175e900-bcf1-4a8d-b59d-1cfe70e14199" />
   <Project Path="OrderSystem/OrderSystem.csproj" />
 </Solution>

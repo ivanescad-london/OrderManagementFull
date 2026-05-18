@@ -16,4 +16,4 @@ COPY --from=build /app/out ./
 
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "OrderSystem.dll"]
+ENTRYPOINT ["dotnet", "OrderSystem.UI.dll"]

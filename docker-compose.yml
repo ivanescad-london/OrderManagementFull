@@ -1,0 +1,29 @@
+services:
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Your_password123
+    ports:
+      - "1434:1433"
+
+  api:
+    build: ./OrderSystem
+    ports:
+      - "7296:8080"
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=OrderSystemDb;User=sa;Password=Your_password123;TrustServerCertificate=True;
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  ui:
+    build: ./OrderSystem.UI
+    ports:
+      - "5000:8080"
+    depends_on:
+      - api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - BackendUrl=http://api:8080

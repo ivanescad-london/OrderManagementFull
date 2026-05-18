@@ -9,9 +9,10 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 // Call Backend API from Blazor
+var backendUrl = builder.Configuration["BackendUrl"] ?? "https://localhost:7296";
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri("https://localhost:7296/") // backend URL
+    BaseAddress = new Uri(backendUrl) // backend URL
 });
 
 // Register Services
