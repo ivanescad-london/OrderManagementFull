@@ -19,6 +19,10 @@ namespace OrderSystem.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Goods>()
+                .Property(g => g.Price)
+                .HasColumnType("decimal(18,2)");
+
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.Client)
                 .WithMany(c => c.Orders)
@@ -33,6 +37,8 @@ namespace OrderSystem.Data
                 .HasOne(o => o.Goods)
                 .WithMany(g => g.Orders)
                 .HasForeignKey(o => o.GoodsId);
+
+
         }
     }
 }
